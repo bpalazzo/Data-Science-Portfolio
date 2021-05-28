@@ -1,0 +1,197 @@
+---
+title: "ABC Wireless Customer Churn Rate"
+author: "Brandon Palazzo"
+date: "5/26/2021"
+output: pdf_document
+---
+
+```{r}
+library(tidyverse)
+library(stringi)
+library(dplyr)
+library(caTools)
+library(caret)
+library(lattice)
+library(ggplot2)
+library(e1071)
+library(gmodels)
+
+```
+
+
+Read the Dataset
+```{r}
+abc_churn<- read.csv("Churn_Train.csv") 
+
+```
+
+
+Data Structure
+```{r}
+str(abc_churn)
+
+```
+
+
+area_code
+```{r}
+new_area_code<-stri_sub(abc_churn$area_code,-3,-1)
+abc_churn$new_area_code<-new_area_code
+abc_churn<- select(abc_churn, -area_code)
+abc_churn$new_area_code=as.factor(abc_churn$new_area_code)
+str(abc_churn)
+
+```
+
+
+state
+```{r}
+abc_churn$state=as.factor(abc_churn$state)
+str(abc_churn)
+
+```
+
+
+international_plan & voice_mail_plan
+```{r}
+abc_churn$international_plan=as.factor(abc_churn$international_plan)
+abc_churn$voice_mail_plan=as.factor(abc_churn$voice_mail_plan)
+abc_churn$churn=as.factor(abc_churn$churn)
+str(abc_churn)
+
+```
+
+
+Checking for Missing Values
+```{r}
+summary(abc_churn)
+abc_churn<-abc_churn%>%drop_na(total_day_minutes)
+summary(abc_churn)
+plot(abc_churn$account_length,abc_churn$churn)
+abc_churn<- select(abc_churn, -account_length)
+abc_churn<-abc_churn%>%drop_na(total_intl_calls)
+abc_churn<-abc_churn%>%drop_na(total_eve_minutes)
+summary(abc_churn)
+
+```
+
+
+Churn Rate
+```{r}
+table(abc_churn$churn)
+428/2503
+```
+
+
+Model
+```{r}
+set.seed(100)
+split <- sample.split(abc_churn$churn, SplitRatio = 0.70)
+train <- abc_churn[split,]
+test <- abc_churn[!(split),]
+prop.table(table(train$churn))
+
+glm<-glm(churn ~., data = train, family = "binomial")
+summary(glm)
+
+model_churn<-glm(churn ~ international_plan+total_day_charge+total_intl_calls+number_customer_service_calls, data = train, family = "binomial")
+
+```
+
+
+Accuracy
+```{r}
+pred<-predict(model_churn,data = train, type = "response")
+glmtab1<-table(train$churn,pred>=0.5)
+glmtab1
+acc_glm_train<-(1715+43)/nrow(train)
+predtest <- predict(model_churn, newdata = test, type = "response")
+glmtab2<-glmtab2 <- table(test$churn, predtest >= 0.5)
+glmtab2
+acc_glm_test <- (727+22)/nrow(test)
+```
+
+Predict
+```{r}
+load("C:/Users/bpala/Desktop/New R Directory/Customers_To_Predict2.RData")
+Churn_Prob<-predict(model_churn, newdata = Customers_To_Predict, type = "response")
+Customers_To_Predict <- Customers_To_Predict %>% mutate(Churn_Prob = Churn_Prob)
+```
+
+```{r}
+Customers_To_Predict
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
