@@ -1,0 +1,33 @@
+---
+title: "QMM - Module 4"
+author: "Brandon Palazzo"
+date: "9/28/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+Load lpSolveAPI Library
+```{r}
+library(lpSolveAPI)
+```
+
+Read LP File
+```{r}
+x <- read.lp("Weigelt.lp") 
+x
+
+```
+Solve for X
+
+```{r}
+solve(x)
+```
+
+Solve for the objectives, variables, and constraints
+```{r}
+get.objective(x)        
+get.variables(x)       
+get.constraints(x)      
+
+```
