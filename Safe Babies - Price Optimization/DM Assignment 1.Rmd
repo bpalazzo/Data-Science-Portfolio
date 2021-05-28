@@ -1,0 +1,148 @@
+---
+title: "DM Assignment 1"
+author: "Brandon Palazzo"
+date: "3/17/2021"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+Uploading dataset
+```{r}
+library(ISLR)
+SafeBabies <- Carseats[,c(1,6,7)] 
+
+```
+
+Split the data by Shelve Location
+```{r}
+
+SafeBabies_Split <- split(SafeBabies, SafeBabies$ShelveLoc) 
+SafeBabies_Bad <- SafeBabies_Split$Bad
+SafeBabies_Good <- SafeBabies_Split$Good
+
+```
+
+Creating best fit line
+```{r}
+ols_bad <- lm(Sales ~ Price, data = SafeBabies_Bad)
+ols_good <- lm(Sales ~ Price, data = SafeBabies_Good)
+ols_bad
+ols_good
+
+```
+
+
+Plot Bad Location Regression Model
+```{r}
+plot (SafeBabies_Bad$Sales ~ SafeBabies_Bad$Price,
+    main = "Bad Location Regression Model",
+    xlab = "Price",
+    ylab = "Sales",
+    pch = 18,
+    col = "red" )
+
+abline(ols_bad)
+
+
+```
+
+Plot Good Location Regression Model
+```{r}
+plot (SafeBabies_Good$Sales ~ SafeBabies_Good$Price,
+    main = "Good Location Regression Model",
+    xlab = "Price",
+    ylab = "Sales",
+    pch = 18,
+    col = "blue" )
+
+abline(ols_good)
+
+```
+
+Optimal Prices for Bad Location Car Seats
+```{r}
+optimal_bad_prices <- matrix(c(40,127.57,45,130.07,50,132.57,55,135.07,60,137.57,65,140.07,70,142.57,75,145.07,80,147.57,85,150.07 ),ncol=2,byrow=TRUE)
+
+bad_location_cost <- c(40,45,50,55,60,65,70,75,80,85)
+bad_location_prices <- c(127.57,130.07,132.57,135.07,137.57,140.07,142.57,145.07,147.57,150.07)
+ols_bad_optimal <- lm( bad_location_cost ~ bad_location_prices )
+
+colnames(optimal_bad_prices) <- c("Cost","Optimal Price")
+
+optimal_bad_prices<- as.table(optimal_bad_prices)
+optimal_bad_prices
+
+
+```
+
+
+Plot Optimal Price Bad Location Regression Model
+```{r}
+plot (bad_location_cost ~ bad_location_prices,
+    main = "Bad Location Optimal Price Regression Model",
+    xlab = "Optimal Price",
+    ylab = "Cost",
+    pch = 18,
+    col = "red" )
+
+abline(ols_bad_optimal)
+
+
+```
+
+
+
+
+Optimal Prices for Good Location Car Seats
+```{r}
+optimal_good_prices <- matrix(c(40,156.13,45,158.63,50,161.13,55,163.63,60,166.13,65,168.63,70,171.13,75,173.63,80,176.13,85,178.63 ),ncol=2,byrow=TRUE)
+
+good_location_cost <- c(40,45,50,55,60,65,70,75,80,85)
+good_location_prices <- c(156.13,158.63,161.13,163.63,166.13,168.63,171.13,173.63,176.13,178.63)
+ols_good_optimal <- lm( good_location_cost ~ good_location_prices )
+
+
+colnames(optimal_good_prices) <- c("Cost","Optimal Price")
+
+optimal_good_prices<- as.table(optimal_good_prices)
+optimal_good_prices
+
+
+```
+
+
+Plot Optimal Price Bad Location Regression Model
+```{r}
+plot (good_location_cost ~ good_location_prices,
+    main = "Good Location Optimal Price Regression Model",
+    xlab = "Optimal Price",
+    ylab = "Cost",
+    pch = 18,
+    col = "blue" )
+
+abline(ols_good_optimal)
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
